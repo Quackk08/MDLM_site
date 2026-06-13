@@ -1,0 +1,47 @@
+{
+  "mode": "research",
+  "device": "auto",
+  "model": {
+    "num_layers": 4,
+    "hidden_size": 256,
+    "num_heads": 4,
+    "ff_size": 1024,
+    "max_seq_len": 64,
+    "dropout": 0.0,
+    "timesteps": 12
+  },
+  "data": {
+    "source": "tinystories",
+    "train_size": 6000,
+    "calibration_size": 512,
+    "validation_size": 512,
+    "test_size": 512,
+    "eval_size": 128,
+    "num_workers": 0
+  },
+  "train": {
+    "seed": 2026,
+    "batch_size": 32,
+    "train_steps": 1500,
+    "learning_rate": 0.0003,
+    "mask_ratio_min": 0.15,
+    "mask_ratio_max": 0.75,
+    "checkpoint_every": 250,
+    "resume": true
+  },
+  "calibration": {
+    "bits_for_fit": [3, 4, 6, 8],
+    "allowed_bits": [4, 6, 8],
+    "target_avg_bits": 6,
+    "perturbation_scale": 0.001,
+    "amplification_batches": 8,
+    "quantization_batches": 8,
+    "eval_seeds": [11, 17, 23, 31, 43],
+    "bootstrap_samples": 1000,
+    "oracle_max_candidates": 80
+  },
+  "output": {
+    "root": "outputs/research",
+    "checkpoint_name": "checkpoint.pt"
+  }
+}

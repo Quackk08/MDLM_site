@@ -1,0 +1,62 @@
+{
+  "mode": "quick",
+  "device": "cpu",
+  "model": {
+    "num_layers": 2,
+    "hidden_size": 192,
+    "num_heads": 4,
+    "ff_size": 768,
+    "max_seq_len": 64,
+    "dropout": 0.0,
+    "timesteps": 8
+  },
+  "data": {
+    "source": "builtin",
+    "train_size": 96,
+    "calibration_size": 24,
+    "validation_size": 24,
+    "test_size": 24,
+    "eval_size": 8,
+    "num_workers": 0
+  },
+  "train": {
+    "seed": 1234,
+    "batch_size": 8,
+    "train_steps": 12,
+    "learning_rate": 0.0005,
+    "mask_ratio_min": 0.15,
+    "mask_ratio_max": 0.75,
+    "checkpoint_every": 50,
+    "resume": false
+  },
+  "calibration": {
+    "bits_for_fit": [
+      3,
+      4,
+      6,
+      8
+    ],
+    "allowed_bits": [
+      4,
+      6,
+      8
+    ],
+    "target_avg_bits": 6,
+    "perturbation_scale": 0.001,
+    "amplification_batches": 2,
+    "quantization_batches": 2,
+    "eval_seeds": [
+      11,
+      17,
+      23,
+      31,
+      43
+    ],
+    "bootstrap_samples": 200,
+    "oracle_max_candidates": 18
+  },
+  "output": {
+    "root": "outputs/quick",
+    "checkpoint_name": "checkpoint.pt"
+  }
+}

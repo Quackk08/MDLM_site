@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.matplotlib/
+.ipynb_checkpoints/
+
+# Regenerated model checkpoints can be recreated by rerunning the pipeline.
+*.pt
+outputs/*/checkpoints/
