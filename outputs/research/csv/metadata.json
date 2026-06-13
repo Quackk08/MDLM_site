@@ -1,6 +1,6 @@
 {
-  "mode": "quick",
-  "dataset_source": "bundled_smoke_corpus",
+  "mode": "research",
+  "dataset_source": "roneneldan/TinyStories",
   "device": "cpu",
   "platform": "Windows-11-10.0.26200-SP0",
   "package_versions": {
@@ -9,11 +9,11 @@
     "numpy": "2.3.5",
     "matplotlib": "3.11.0"
   },
-  "parameter_count": 954048,
-  "train_size": 96,
-  "calibration_size": 24,
-  "validation_size": 24,
-  "test_size": 24,
-  "runtime_seconds": 67.80917930000578,
+  "parameter_count": 3245824,
+  "train_size": 6000,
+  "calibration_size": 512,
+  "validation_size": 512,
+  "test_size": 512,
+  "runtime_seconds": 2694.5991974000062,
   "fake_quantization_note": "Fake quantization simulates activation rounding; it does not provide real low-bit storage or hardware acceleration."
 }

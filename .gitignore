@@ -7,3 +7,4 @@ __pycache__/
 # Regenerated model checkpoints can be recreated by rerunning the pipeline.
 *.pt
 outputs/*/checkpoints/
+outputs/*_run.*.log

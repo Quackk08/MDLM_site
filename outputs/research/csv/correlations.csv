@@ -1,0 +1,3 @@
+x,y,correlation,value,n_methods,scope,units_note
+predicted_gronwall_objective_p2,final_logit_mse_mean,pearson,0.42928884723872907,8,quantized_methods_only,"activation-calibrated score compared to observed logit MSE by correlation, not as a certified numeric upper bound"
+predicted_gronwall_objective_p2,final_logit_mse_mean,spearman,0.27710843373493976,8,quantized_methods_only,"activation-calibrated score compared to observed logit MSE by correlation, not as a certified numeric upper bound"
