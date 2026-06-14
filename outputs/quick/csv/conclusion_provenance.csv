@@ -1,4 +1,0 @@
-hypothesis,status,claim,evidence,source_csv
-H1,supported,낮은 bit width는 더 큰 observed final logit MSE를 낸다.,"uniform_4bit=0.000874985, uniform_6bit=4.03696e-05, uniform_8bit=2.3853e-06",evaluation_summary.csv
-H2,rejected,같은 총 bit budget에서 Grönwall-weighted schedule은 uniform 6-bit보다 낮은 final logit MSE를 낸다.,"gronwall=0.000314268, uniform_6bit=4.03696e-05, paired_diff_uniform_minus_gronwall=-0.000273898, test_status=normal_approximation, p=0.0",evaluation_summary.csv;paired_tests.csv
-H3,inconclusive,예측 Grönwall 목적식과 observed final logit MSE는 양의 순위상관을 가진다.,"spearman=0.421687, n_methods=8",correlations.csv
