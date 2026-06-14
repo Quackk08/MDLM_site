@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="양자화 오차함수의 미적분과 Gronwall 부등식을 이용한 소형 디퓨전 언어모델 비트 배분 탐구 요약 앱"
+    />
+    <title>DLLM 비트 배분 탐구 앱</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="phone-shell" id="app">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">30817 송리안 · 수학적 최적화 탐구</p>
+          <h1>DLLM 비트 배분</h1>
+        </div>
+        <a class="repo-pill" href="https://github.com/Quackk08/MDLM_site" target="_blank" rel="noreferrer">GitHub</a>
+      </header>
+
+      <section class="screen-stage" aria-live="polite">
+        <article class="screen is-active" data-screen="home">
+          <div class="hero-panel">
+            <p class="kicker">핵심 결론</p>
+            <h2>같은 평균 6비트라도, 상한식을 그대로 최적화하면 성능이 무너질 수 있다.</h2>
+            <p>
+              비트 수와 activation 양자화 오차를 <strong>E(b)=C·2<sup>-2b</sup></strong>로 모델링하고,
+              도함수·정적분·이산 Grönwall 부등식으로 timestep별 비트 배분을 설계했다.
+            </p>
+          </div>
+
+          <div class="kpi-grid">
+            <article>
+              <span>Uniform 6-bit MSE</span>
+              <strong>0.003568</strong>
+            </article>
+            <article class="risk">
+              <span>Raw Grönwall MSE</span>
+              <strong>0.063673</strong>
+            </article>
+            <article>
+              <span>오차 증가</span>
+              <strong>17.84배</strong>
+            </article>
+            <article>
+              <span>모델 규모</span>
+              <strong>324만</strong>
+            </article>
+          </div>
+
+          <div class="flow-cards">
+            <article>
+              <span>1</span>
+              <div>
+                <h3>현실 문제</h3>
+                <p>AI 앱에서 토큰 길이, 응답 비용, 계산량을 함께 관리해야 한다.</p>
+              </div>
+            </article>
+            <article>
+              <span>2</span>
+              <div>
+                <h3>수학 모델</h3>
+                <p>비트 폭 b가 커질수록 양자화 평균제곱오차가 지수적으로 감소한다고 둔다.</p>
+              </div>
+            </article>
+            <article>
+              <span>3</span>
+              <div>
+                <h3>실험 판정</h3>
+                <p>비트 증가 효과는 확인됐지만 raw Grönwall 배분은 실제 성능에서 실패했다.</p>
+              </div>
+            </article>
+          </div>
+
+          <div class="detail-panel">
+            <p class="eyebrow">Research Question</p>
+            <h3>오차에 민감한 timestep에 비트를 더 주면 같은 평균 6비트에서도 손실을 줄일 수 있을까?</h3>
+            <p>
+              탐구는 AI 앱의 토큰 길이 제한과 계산 비용 문제에서 출발한다. DLLM은 문장을 여러 단계에 걸쳐
+              복원하므로 각 timestep의 정밀도를 다르게 배정할 수 있고, 이 배정 문제를 미적분 기반 최적화로
+              해석했다.
+            </p>
+          </div>
+
+          <div class="hypothesis-grid">
+            <article>
+              <span>H1</span>
+              <strong>비트 증가 → 오차 감소</strong>
+              <p>4bit, 6bit, 8bit의 final logit MSE가 지수적으로 줄어드는지 확인한다.</p>
+            </article>
+            <article>
+              <span>H2</span>
+              <strong>Raw Grönwall 우수성</strong>
+              <p>같은 총비트 예산에서 Grönwall 가중 스케줄이 uniform 6-bit보다 좋은지 검증한다.</p>
+            </article>
+            <article>
+              <span>H3</span>
+              <strong>예측값과 관측값의 관계</strong>
+              <p>이론 objective와 실제 MSE 순위가 얼마나 일치하는지 상관으로 비교한다.</p>
+            </article>
+          </div>
+
+          <div class="spec-strip">
+            <article><span>데이터</span><strong>TinyStories</strong></article>
+            <article><span>timestep</span><strong>12</strong></article>
+            <article><span>평가 샘플</span><strong>640</strong></article>
+            <article><span>fake quant</span><strong>4/6/8 bit</strong></article>
+          </div>
+        </article>
+
+        <article class="screen" data-screen="theory">
+          <div class="screen-title">
+            <p class="eyebrow">Calculus Core</p>
+            <h2>미적분 화면</h2>
+          </div>
+
+          <div class="formula-stack">
+            <article>
+              <span>오차 함수</span>
+              <strong>E(b)=C·2<sup>-2b</sup></strong>
+              <p>비트 수가 증가할수록 양자화 평균제곱오차가 빠르게 감소한다.</p>
+            </article>
+            <article>
+              <span>도함수</span>
+              <strong>E′(b)=-2C ln2·2<sup>-2b</sup></strong>
+              <p>추가 비트가 만드는 순간적인 오차 감소율이다.</p>
+            </article>
+            <article>
+              <span>정적분</span>
+              <strong>∫ -E′(b)db = C(2<sup>-2a</sup>-2<sup>-2c</sup>)</strong>
+              <p>비트 구간 전체에서 얻는 누적 오차 감소량을 계산한다.</p>
+            </article>
+          </div>
+
+          <div class="calc-lab">
+            <div class="calc-head">
+              <div>
+                <p class="eyebrow">Interactive Calculator</p>
+                <h3>비트 폭을 움직여 오차 변화를 보기</h3>
+              </div>
+              <strong id="bitValue">6.0 bit</strong>
+            </div>
+            <label class="slider-label" for="bitSlider">비트 폭 b</label>
+            <input id="bitSlider" type="range" min="3" max="8" step="0.1" value="6" />
+            <div class="curve-field" id="curveField" aria-hidden="true">
+              <span class="curve-line"></span>
+              <span class="bit-marker" id="bitMarker"></span>
+            </div>
+            <div class="calc-readout">
+              <article>
+                <span>E(b)</span>
+                <strong id="errorValue">2.441e-4</strong>
+              </article>
+              <article>
+                <span>E′(b)</span>
+                <strong id="derivativeValue">-3.385e-4</strong>
+              </article>
+              <article>
+                <span>b→b+2 누적 감소</span>
+                <strong id="gainValue">2.289e-4</strong>
+              </article>
+            </div>
+          </div>
+
+          <figure class="figure-card">
+            <img src="./assets/figures/figure_01_calculus_function_derivative.png" alt="양자화 오차 함수와 도함수 그래프" />
+            <figcaption>오차 함수와 도함수: 낮은 비트 구간에서 한계 효용이 더 크다.</figcaption>
+          </figure>
+
+          <div class="ratio-strip">
+            <article>
+              <span>4→6 bit</span>
+              <strong>64C/4096</strong>
+            </article>
+            <article>
+              <span>6→8 bit</span>
+              <strong>4C/4096</strong>
+            </article>
+            <article>
+              <span>효율 차이</span>
+              <strong>16배</strong>
+            </article>
+          </div>
+        </article>
+
+        <article class="screen" data-screen="lab">
+          <div class="screen-title">
+            <p class="eyebrow">Interactive Screen</p>
+            <h2>비트 배분 랩</h2>
+          </div>
+
+          <div class="lab-panel">
+            <div class="lab-topline">
+              <div>
+                <span>현재 스케줄</span>
+                <strong id="labScheduleName">Uniform 6-bit</strong>
+              </div>
+              <button class="run-button" type="button" id="runLab">실행</button>
+            </div>
+
+            <div class="schedule-picker" id="schedulePicker" aria-label="비트 스케줄 선택"></div>
+
+            <div class="timeline-shell">
+              <div class="timeline-head">
+                <span id="labStepText">Step 01 / 12</span>
+                <strong id="labBitText">6 bit</strong>
+              </div>
+              <div class="lab-bit-strip" id="labBitStrip"></div>
+              <div class="scan-line" id="scanLine"></div>
+            </div>
+
+            <div class="denoise-card">
+              <div class="token-row" id="tokenRow"></div>
+              <div class="signal-row">
+                <article>
+                  <span>진행률</span>
+                  <strong id="labProgressText">8%</strong>
+                </article>
+                <article>
+                  <span>관측 final MSE</span>
+                  <strong id="labMseText">0.003568</strong>
+                </article>
+              </div>
+              <div class="error-meter" aria-label="오차 게이지">
+                <i id="errorMeter"></i>
+              </div>
+            </div>
+
+            <div class="lab-insight" id="labInsight">
+              Uniform 6-bit은 모든 timestep을 같은 정밀도로 처리해 가장 안정적인 기준선이 된다.
+            </div>
+          </div>
+
+          <div class="lab-note">
+            <strong>지정한 움직이는 화면</strong>
+            <p>
+              이 화면은 선택한 비트 스케줄이 12개 denoising timestep을 통과하는 흐름을 앱처럼 재생한다.
+              raw Grönwall을 고르면 앞쪽 timestep에 8비트가 몰리고, 뒤쪽 4비트 구간에서 오차 게이지가 크게 남는다.
+            </p>
+          </div>
+        </article>
+
+        <article class="screen" data-screen="results">
+          <div class="screen-title">
+            <p class="eyebrow">Observed Results</p>
+            <h2>결과 화면</h2>
+          </div>
+
+          <div class="chart-controls" aria-label="결과 차트 선택">
+            <button type="button" class="is-active" data-metric="mse">Final Logit MSE</button>
+            <button type="button" data-metric="accuracy">Masked Accuracy</button>
+          </div>
+          <div class="bar-chart" id="metricChart"></div>
+
+          <div class="method-inspector" id="methodInspector"></div>
+
+          <div class="result-callout">
+            <span>가설 판정</span>
+            <strong>H1 지지 · H2 기각 · H3 보류</strong>
+            <p>
+              비트 수가 증가하면 오차는 감소했다. 그러나 Grönwall objective와 실제 final logit MSE의
+              Spearman 상관은 0.277로 약했다.
+            </p>
+          </div>
+
+          <figure class="figure-card">
+            <img src="./assets/figures/figure_07_final_error_comparison.png" alt="최종 logit MSE 비교 막대그래프" />
+            <figcaption>핵심 결과: raw Grönwall 방식은 같은 평균 6비트 조건에서 uniform 6-bit보다 악화됐다.</figcaption>
+          </figure>
+        </article>
+
+        <article class="screen" data-screen="assets">
+          <div class="screen-title">
+            <p class="eyebrow">Figures</p>
+            <h2>자료 화면</h2>
+          </div>
+
+          <div class="asset-actions">
+            <a href="./assets/report.pdf" target="_blank" rel="noreferrer">원문 PDF</a>
+            <a href="https://github.com/Quackk08/MDLM" target="_blank" rel="noreferrer">연구 저장소</a>
+            <a href="https://github.com/Quackk08/MDLM_site" target="_blank" rel="noreferrer">사이트 저장소</a>
+          </div>
+          <div class="figure-gallery">
+            <figure>
+              <img src="./assets/figures/figure_02_tangent_line.png" alt="6비트 접선 그래프" />
+              <figcaption>b=6 접선</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/figures/figure_03_continuous_gronwall.png" alt="연속형 Gronwall 오차 누적 그래프" />
+              <figcaption>연속형 Grönwall</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/figures/figure_04_per_timestep_C_L_G.png" alt="timestep별 C L G 값 그래프" />
+              <figcaption>timestep별 C, L, G</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/figures/figure_05_predicted_vs_observed.png" alt="예측 objective와 관측 MSE 산점도" />
+              <figcaption>예측과 관측</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/figures/figure_06_accuracy_vs_average_bits.png" alt="평균 비트와 정확도 관계 그래프" />
+              <figcaption>평균 비트와 정확도</figcaption>
+            </figure>
+            <figure>
+              <img src="./assets/figures/figure_08_bit_allocations.png" alt="비트 배분 스케줄 비교 그래프" />
+              <figcaption>비트 배분 스케줄</figcaption>
+            </figure>
+          </div>
+        </article>
+      </section>
+
+      <nav class="tab-bar" aria-label="앱 화면 이동">
+        <button type="button" class="is-active" data-target="home">홈</button>
+        <button type="button" data-target="theory">수식</button>
+        <button type="button" data-target="lab">랩</button>
+        <button type="button" data-target="results">결과</button>
+        <button type="button" data-target="assets">자료</button>
+      </nav>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "mdlm-research-mobile-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "dev": "node scripts/build-site.mjs --watch"
+  }
+}

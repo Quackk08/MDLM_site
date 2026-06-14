@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 .matplotlib/
 .ipynb_checkpoints/
+dist/
 
 # Regenerated model checkpoints can be recreated by rerunning the pipeline.
 *.pt
