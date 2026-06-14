@@ -253,6 +253,7 @@ img {
 .detail-panel,
 .hypothesis-grid article,
 .spec-strip article,
+.text-card,
 .ratio-strip article,
 .lab-panel,
 .lab-note,
@@ -281,6 +282,7 @@ img {
 
 .kpi-grid span,
 .formula-stack span,
+.text-card .eyebrow,
 .spec-strip span,
 .ratio-strip span,
 .lab-topline span,
@@ -366,6 +368,36 @@ img {
   font-size: 16px;
 }
 
+.text-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.text-card {
+  padding: 16px;
+  background: #fff;
+}
+
+.text-card h3 {
+  margin: 7px 0 0;
+  font-size: 18px;
+  line-height: 1.38;
+}
+
+.text-card p + p {
+  margin-top: 10px;
+}
+
+.text-card sup,
+.text-card sub {
+  line-height: 0;
+}
+
+.asset-guide {
+  margin-bottom: 14px;
+}
+
 .flow-cards article {
   display: grid;
   grid-template-columns: 32px 1fr;
@@ -387,6 +419,7 @@ img {
 .flow-cards h3,
 .flow-cards p,
 .formula-stack p,
+.text-card p,
 .result-callout p,
 .lab-note p,
 .detail-panel p,
@@ -401,6 +434,7 @@ img {
 
 .flow-cards p,
 .formula-stack p,
+.text-card p,
 .result-callout p,
 .lab-note p,
 .detail-panel p,
